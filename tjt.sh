@@ -90,7 +90,7 @@ cat <<EOF> /root/akun/tjt.json
 
 EOF
 cat <<EOF> /usr/bin/gproxy-tjt
-badvpn-tun2socks --tundev tun1 --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 $badvpn --udpgw-connection-buffer-size 65535 --udpgw-transparent-dns &
+badvpn-tun2socks --tundev tun0 --netif-ipaddr 10.0.0.2 --netif-netmask 255.255.255.0 $badvpn --udpgw-connection-buffer-size 65535 --udpgw-transparent-dns &
 EOF
 chmod +x /usr/bin/gproxy-tjt
 echo "Sett Profile Sukses"
@@ -106,8 +106,8 @@ route="$(cat /root/akun/ipmodem.txt | grep -i ipmodem | cut -d= -f2 | tail -n1)"
 
 trojan -c /root/akun/tjt.json &
 sleep 3
-ip tuntap add dev tun1 mode tun
-ifconfig tun1 10.0.0.1 netmask 255.255.255.0
+ip tuntap add dev tun0 mode tun
+ifconfig tun0 10.0.0.1 netmask 255.255.255.0
 /usr/bin/gproxy-tjt
 route add 8.8.8.8 gw $route metric 0
 route add 8.8.4.4 gw $route metric 0
@@ -133,7 +133,7 @@ killall -q badvpn-tun2socks trojan ping-tjt
 route del 8.8.8.8 gw $route metric 0
 route del 8.8.4.4 gw $route metric 0
 route del $host gw $route metric 0
-ip link delete tun1
+ip link delete tun0
 killall dnsmasq 
 /etc/init.d/dnsmasq start > /dev/null
 sleep 2
